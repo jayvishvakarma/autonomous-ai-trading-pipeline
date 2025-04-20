@@ -1,3 +1,5 @@
+version: '3.8'
+
 services:
   redpanda-1:
     image: docker.redpanda.com/redpandadata/redpanda:v23.1.8
@@ -25,7 +27,6 @@ services:
       - --advertise-rpc-addr
       - redpanda-1:33145
     ports:
-      # - 8081:8081
       - 8082:8082
       - 9092:9092
       - 28082:28082
@@ -34,39 +35,39 @@ services:
       - datamasterylab
 
   redpanda-2:
-     image: docker.redpanda.com/redpandadata/redpanda:v23.1.8
-     container_name: redpanda-2
-     command:
-       - redpanda
-       - start
-       - --smp
-       - '1'
-       - --reserve-memory
-       - 0M
-       - --overprovisioned
-       - --node-id
-       - '2'
-       - --seeds
-       - redpanda-1:33145
-       - --kafka-addr
-       - PLAINTEXT://0.0.0.0:29093,OUTSIDE://0.0.0.0:9093
-       - --advertise-kafka-addr
-       - PLAINTEXT://redpanda-2:29093,OUTSIDE://localhost:9093
-       - --pandaproxy-addr
-       - PLAINTEXT://0.0.0.0:28083,OUTSIDE://0.0.0.0:8083
-       - --advertise-pandaproxy-addr
-       - PLAINTEXT://redpanda-2:28083,OUTSIDE://localhost:8083
-       - --rpc-addr
-       - 0.0.0.0:33146
-       - --advertise-rpc-addr
-       - redpanda-2:33146
-     ports:
-       - 8083:8083
-       - 9093:9093
-       - 28083:28083
-       - 29093:29093
-     networks:
-       - datamasterylab
+    image: docker.redpanda.com/redpandadata/redpanda:v23.1.8
+    container_name: redpanda-2
+    command:
+      - redpanda
+      - start
+      - --smp
+      - '1'
+      - --reserve-memory
+      - 0M
+      - --overprovisioned
+      - --node-id
+      - '2'
+      - --seeds
+      - redpanda-1:33145
+      - --kafka-addr
+      - PLAINTEXT://0.0.0.0:29093,OUTSIDE://0.0.0.0:9093
+      - --advertise-kafka-addr
+      - PLAINTEXT://redpanda-2:29093,OUTSIDE://localhost:9093
+      - --pandaproxy-addr
+      - PLAINTEXT://0.0.0.0:28083,OUTSIDE://0.0.0.0:8083
+      - --advertise-pandaproxy-addr
+      - PLAINTEXT://redpanda-2:28083,OUTSIDE://localhost:8083
+      - --rpc-addr
+      - 0.0.0.0:33146
+      - --advertise-rpc-addr
+      - redpanda-2:33146
+    ports:
+      - 8083:8083
+      - 9093:9093
+      - 28083:28083
+      - 29093:29093
+    networks:
+      - datamasterylab
 
   redpanda-console:
     image: docker.redpanda.com/redpandadata/console:v2.2.4
@@ -77,7 +78,7 @@ services:
       CONFIG_FILEPATH: /tmp/config.yml
       CONSOLE_CONFIG_FILE: |
         kafka:
-          brokers: ["redpanda-1:29092", "redpanda-2:29092"]
+          brokers: ["redpanda-1:29092", "redpanda-2:29093"]
           schemaRegistry:
             enabled: false
         redpanda:
@@ -94,7 +95,6 @@ services:
     networks:
       - datamasterylab
 
-  # Flink cluster
   jobmanager:
     container_name: jobmanager
     build:
@@ -131,11 +131,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile-sql
-    command:
-      - /opt/flink/bin/sql-client.sh
-      - embedded
-      - -l
-      - /opt/sql-client/lib
+    command: tail -f /dev/null
     depends_on:
       - jobmanager
     environment:
@@ -145,5 +141,21 @@ services:
         rest.address: jobmanager
     networks:
       - datamasterylab
+
+  sql-gateway:
+    build:
+      context: .
+      dockerfile: Dockerfile-sql-gateway
+    container_name: sql-gateway
+    ports:
+      - "9000:9000"
+    depends_on:
+      - jobmanager
+    volumes:
+      - ./config:/opt/flink/conf   # 👈 Important Mount
+    networks:
+      - datamasterylab
+
 networks:
   datamasterylab:
+    driver: bridge

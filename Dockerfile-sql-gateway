@@ -1,0 +1,7 @@
+FROM flink:1.19-scala_2.12-java11
+
+# Copy both JARs into Flink lib
+COPY ./lib/flink-connector-kafka-3.3.0-1.19.jar /opt/flink/lib/
+COPY ./lib/kafka-clients-3.5.1.jar /opt/flink/lib/
+
+CMD ["bash", "-c", "bin/taskmanager.sh start-foreground"]

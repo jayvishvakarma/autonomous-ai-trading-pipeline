@@ -78,6 +78,6 @@ if __name__ == '__main__':
         get_producer(config['redpanda_brokers']),
         topic='market-news',
         start_date='2025-01-01',
-        end_date='2025-04-18',
+        end_date='2025-04-20',
         symbols=['AAPL', 'Apple']
     )
