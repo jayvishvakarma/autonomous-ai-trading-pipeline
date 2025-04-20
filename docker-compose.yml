@@ -32,7 +32,7 @@ services:
       - 28082:28082
       - 29092:29092
     networks:
-      - datamasterylab
+      - jaypreeti
 
   redpanda-2:
     image: docker.redpanda.com/redpandadata/redpanda:v23.1.8
@@ -67,7 +67,7 @@ services:
       - 28083:28083
       - 29093:29093
     networks:
-      - datamasterylab
+      - jaypreeti
 
   redpanda-console:
     image: docker.redpanda.com/redpandadata/console:v2.2.4
@@ -93,7 +93,7 @@ services:
       - redpanda-1
       - redpanda-2
     networks:
-      - datamasterylab
+      - jaypreeti
 
   jobmanager:
     container_name: jobmanager
@@ -124,7 +124,7 @@ services:
         jobmanager.rpc.address: jobmanager
         taskmanager.numberOfTaskSlots: 20
     networks:
-      - datamasterylab
+      - jaypreeti
 
   sql-client:
     container_name: sql-client
@@ -140,7 +140,7 @@ services:
         jobmanager.rpc.address: jobmanager
         rest.address: jobmanager
     networks:
-      - datamasterylab
+      - jaypreeti
 
   sql-gateway:
     build:
@@ -154,7 +154,7 @@ services:
     volumes:
       - ./config:/opt/flink/conf   # 👈 Important Mount
     networks:
-      - datamasterylab
+      - jaypreeti
 
 networks:
   datamasterylab:
