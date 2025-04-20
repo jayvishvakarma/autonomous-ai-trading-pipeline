@@ -2,8 +2,8 @@ from openai import AzureOpenAI
 
 # Azure OpenAI Config
 client = AzureOpenAI(
-    azure_endpoint="https://testingapi.openai.azure.com/",
-    api_key="967z4RksgDIq0KggjJfE2XYoRz9fD5GeZLGNNwUcCCvCyhh9L5NKJQQJ99BDACYeBjFXJ3w3AAABACOGhpis",
+    azure_endpoint="add your end point",
+    api_key="add your azure OpenAI/LLM key",
     api_version="2023-12-01-preview"
 )
 
