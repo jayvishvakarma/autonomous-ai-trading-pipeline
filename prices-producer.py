@@ -65,7 +65,7 @@ if __name__ == '__main__':
         redpanda_client,
         topic='stock-prices',
         start_date='2025-01-01',
-        end_date='2025-04-18',
+        end_date='2025-04-26',
         symbol='AAPL'
     )
 

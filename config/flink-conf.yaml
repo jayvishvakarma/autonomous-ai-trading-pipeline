@@ -1,7 +1,7 @@
 blob.server.port: 6124
 sql-gateway.endpoint.rest.address: 0.0.0.0
 sql-gateway.endpoint.rest.port: 9000
-jobmanager.rpc.address: 1f7b4e8f05b7
+jobmanager.rpc.address: c77bd2526f2f
 taskmanager.numberOfTaskSlots: 4
 rest.address: jobmanager
 query.server.port: 6125

@@ -12,31 +12,26 @@ DEPLOYMENT_NAME = "gpt-35-turbo-16k"  # Your deployed model name
 def get_sentiment(text):
     try:
         response = client.chat.completions.create(
-            model=DEPLOYMENT_NAME,  # Important: use Deployment Name here, not model name
+            model=DEPLOYMENT_NAME,
             messages=[
                 {
                     "role": "system",
-                    "content": "You are a sentiment analysis assistant. Reply only with 'positive', 'neutral', or 'negative'."
+                    "content": (
+                        "You are a sentiment analysis model. "
+                        "Given a text, reply only with a real number sentiment score between -1.0 (very negative) to +1.0 (very positive). "
+                        "Do not reply with any text, just the numeric score."
+                    )
                 },
                 {
                     "role": "user",
-                    "content": f"What is the sentiment of this text: '{text}'?"
+                    "content": f"What is the sentiment score of this text: '{text}'?"
                 }
             ],
             temperature=0.0
         )
 
-        sentiment = response.choices[0].message.content.strip().lower()
-
-        # Map sentiment text to numerical compound score
-        if sentiment == "positive":
-            return 1.0
-        elif sentiment == "neutral":
-            return 0.0
-        elif sentiment == "negative":
-            return -1.0
-        else:
-            return 0.0  # fallback if unexpected output
+        sentiment_score = float(response.choices[0].message.content.strip())
+        return round(sentiment_score, 4)  # round to 4 decimal places
 
     except Exception as e:
         print(f"Error during sentiment analysis: {e}")
